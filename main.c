@@ -11,7 +11,7 @@
 	#define red "\033[0;31m"
 	#define green "\033[0;32m"
 	#define yellow "\033[0;33m"
-	#define blue "\033[0;34m"
+	#define blue "\033[0;34m"  
 	#define grey "\033[0;37m"
 	#define reset "\033[0m"
 #elif monochrome == 1
@@ -39,7 +39,10 @@
 	#define clearscr "clear"
 #endif
 
-void newfloor(int mat[21][21], int xpos, int ypos, int dx, int dy, int ky, int kx)
+/* stuff variables; will almost CERTAINLY change later*/
+int dx, dy, kx, ky, mx, my;
+
+int newfloor(int mat[21][21], int xpos, int ypos)
 {
 	/*print wall tiles*/
 	int wallx, wally;
@@ -75,6 +78,18 @@ void newfloor(int mat[21][21], int xpos, int ypos, int dx, int dy, int ky, int k
 		}
 	}
 	
+	dx = rand() % 20, dy = rand() % 20; /*ladder*/
+	kx = rand() % 20, ky = rand() % 20; /*key*/
+	mx = rand() % 20, my = rand() % 20; /*money*/
+		
+	/*money*/
+	int l;
+	for(l=0; l<5; l++)
+	{
+		mx = rand() % 20, my = rand() % 20;
+		mat[mx][my] = 36;
+	}
+	
 	mat[ypos][xpos] = characterid;
 	mat[dy][dx] = ladderid;
 	mat[ky][kx] = 33;
@@ -92,19 +107,7 @@ int main(void)
 	int health = 5, money = 0;
 	int haskey = 0;
 	
-	int dx = rand() % 20, dy = rand() % 20; 
-	int kx = rand() % 20, ky = rand() % 20;
-	newfloor(mat, xpos, ypos, dx, dy, kx, ky);
-	
-	/*money*/
-	int mx, my;
-	
-	int l;
-	for(l=0; l<5; l++)
-	{
-		mx = rand() % 20, my = rand() % 20;
-		mat[mx][my] = 36;
-	}
+	newfloor(mat, xpos, ypos);
 	
 	while(1)
 	{		
@@ -164,7 +167,7 @@ int main(void)
 		/*go to next level*/
 		if(mat[ypos][xpos] == ladderid && haskey == 1)
 		{
-			newfloor(mat, xpos, ypos, dx, dy, kx, ky);
+			newfloor(mat, xpos, ypos);
 			haskey-=1;
 		}
 		
