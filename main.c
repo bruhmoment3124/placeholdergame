@@ -25,11 +25,11 @@
 
 #if asciiext == 0
 	#define characterid 64
-	#define wallid 124
+	#define wallid 35
 	#define ladderid 61
 #elif asciiext == 1
 	#define characterid 148
-	#define wallid 177
+	#define wallid 219
 	#define ladderid 240
 #endif
 
@@ -41,6 +41,7 @@
 
 /* stuff variables; will almost CERTAINLY change later*/
 int dx, dy, kx, ky, mx, my;
+int xpos, ypos;
 
 int newfloor(int mat[21][21], int xpos, int ypos)
 {
@@ -64,16 +65,16 @@ int newfloor(int mat[21][21], int xpos, int ypos)
 			int dir = rand() % 4;
 			if(dir == 0)
 			{
-				mat[floory-1][floorx] = 46;
+				mat[floory-1][floorx] = 45;
 			} else if(dir == 1)
 			{
-				mat[floory+1][floorx] = 46;
+				mat[floory+1][floorx] = 45;
 			} else if(dir == 2)
 			{
-				mat[floory][floorx-1] = 46;
+				mat[floory][floorx-1] = 45;
 			}	else if(dir == 3)
 			{
-				mat[floory][floorx+1] = 46;
+				mat[floory][floorx+1] = 45;
 			}
 		}
 	}
@@ -82,6 +83,9 @@ int newfloor(int mat[21][21], int xpos, int ypos)
 	kx = rand() % 20, ky = rand() % 20; /*key*/
 	mx = rand() % 20, my = rand() % 20; /*money*/
 		
+	/*player*/
+	xpos = 1, ypos = 1;	
+	
 	/*money*/
 	int l;
 	for(l=0; l<5; l++)
@@ -122,7 +126,7 @@ int main(void)
 				if(mat[i][k] == wallid) /*bricks*/
 				{
 					printf(blue "%c" reset, mat[i][k]); /*blue*/
-				} else if(mat[i][k] == 46) /*ground*/
+				} else if(mat[i][k] == 45) /*ground*/
 				{
 					printf(grey "%c" reset, mat[i][k]); /*grey*/
 				} else if(mat[i][k] == 33) /*key*/
@@ -167,8 +171,10 @@ int main(void)
 		/*go to next level*/
 		if(mat[ypos][xpos] == ladderid && haskey == 1)
 		{
-			newfloor(mat, xpos, ypos);
+			xpos = 1, ypos = 1;
 			haskey-=1;
+			
+			newfloor(mat, xpos, ypos);
 		}
 		
 		/*screen wrap*/
@@ -189,14 +195,14 @@ int main(void)
 		/*collect money*/
 		if(mat[ypos][xpos] == 36) 
 		{
-			mat[my][mx] = 46;
+			mat[my][mx] = 45;
 			money+=1;
 		}
 		
 		/*collect key*/
 		if(mat[ypos][xpos] == 33) 
 		{
-			mat[ky][kx] = 46;
+			mat[ky][kx] = 45;
 			haskey = 1;
 		}
 	}
