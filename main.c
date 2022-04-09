@@ -39,17 +39,17 @@
 	#define clearscr "clear"
 #endif
 
-/* stuff variables; will almost CERTAINLY change later*/
+/*stuff variables; will almost CERTAINLY change later*/
 int dx, dy, kx, ky, mx, my;
 int xpos, ypos;
 
-int newfloor(int mat[21][21], int xpos, int ypos)
+int newfloor(int sizex, int sizey, int mat[sizex][sizey], int xpos, int ypos)
 {
 	/*print wall tiles*/
 	int wallx, wally;
-	for(wallx=1; wallx<21; wallx++)
+	for(wallx=1; wallx<sizex+1; wallx++)
 	{
-		for(wally=1; wally<21; wally++)
+		for(wally=1; wally<sizey+1; wally++)
 		{		
 			mat[wally][wallx] = wallid;
 			printf("%c", mat[wally][wallx]);
@@ -58,9 +58,9 @@ int newfloor(int mat[21][21], int xpos, int ypos)
 	
 	/*print floor tiles*/
 	int floorx, floory;
-	for(floorx=1; floorx<21; floorx++)
+	for(floorx=1; floorx<sizex+1; floorx++)
 	{
-		for(floory=1; floory<21; floory++)
+		for(floory=1; floory<sizey+1; floory++)
 		{
 			int dir = rand() % 4;
 			if(dir == 0)
@@ -79,48 +79,60 @@ int newfloor(int mat[21][21], int xpos, int ypos)
 		}
 	}
 	
-	dx = rand() % 20, dy = rand() % 20; /*ladder*/
-	kx = rand() % 20, ky = rand() % 20; /*key*/
-	mx = rand() % 20, my = rand() % 20; /*money*/
+	dx = rand() % sizex, dy = rand() % sizey; /*ladder*/
+	kx = rand() % sizex, ky = rand() % sizey; /*key*/
+	mx = rand() % sizex, my = rand() % sizey; /*money*/
 		
 	/*player*/
 	xpos = 1, ypos = 1;	
+	mat[ypos][xpos] = characterid;
+	
+	/*ladder*/
+	mat[dy][dx] = ladderid;
+	mat[ky][kx] = 33;
 	
 	/*money*/
 	int l;
 	for(l=0; l<5; l++)
 	{
-		mx = rand() % 20, my = rand() % 20;
+		mx = rand() % sizex, my = rand() % sizey;
 		mat[mx][my] = 36;
 	}
-	
-	mat[ypos][xpos] = characterid;
-	mat[dy][dx] = ladderid;
-	mat[ky][kx] = 33;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	srand(time(0)); /*generate seeds*/
 	
-	/*map variables*/
-	int mat[21][21];
-	
 	/*player variables*/
-	int xpos = 1, ypos = 1;
+	xpos = 1, ypos = 1;
 	int health = 5, money = 0;
 	int haskey = 0;
 	
-	newfloor(mat, xpos, ypos);
+	/*map variables*/
+	int sizex, sizey;
+	if(argv[1] != NULL) /*if arguments are supplied to the console*/
+	{
+		sizex = atoi(argv[1]);
+		sizey = atoi(argv[2]);
+	} else
+	{
+		printf("enter map size (x/y):\n");
+		scanf("%d", &sizex);
+		scanf("%d", &sizey);
+	}
+	
+	int mat[sizey+2][sizex+2];
+	newfloor(sizex+1, sizey+1, mat, xpos, ypos);
 	
 	while(1)
 	{		
 		system(clearscr); /*clear screen*/
 
 		int i, k;
-		for(i=1; i<21; i++)
+		for(i=1; i<sizex+1; i++)
 		{
-			for(k=1; k<21; k++)
+			for(k=1; k<sizey+1; k++)
 			{
 				/*print in color*/
 				if(mat[i][k] == wallid) /*bricks*/
@@ -174,20 +186,20 @@ int main(void)
 			xpos = 1, ypos = 1;
 			haskey-=1;
 			
-			newfloor(mat, xpos, ypos);
+			newfloor(sizex+1, sizey+1, mat, xpos, ypos);
 		}
 		
 		/*screen wrap*/
 		if(xpos == 0) /*left side*/
 		{
-			xpos = 20;
-		} else if(xpos == 21) /*right side*/
+			xpos = sizex;
+		} else if(xpos == sizex+1) /*right side*/
 		{
 			xpos = 1;
 		} else if(ypos == 0) /*top side*/
 		{
-			ypos = 20;
-		} else if(ypos == 21) /*bottom side*/
+			ypos = sizey;
+		} else if(ypos == sizey+1) /*bottom side*/
 		{
 			ypos = 1;
 		}
