@@ -41,9 +41,8 @@
 
 /*stuff variables; will almost CERTAINLY change later*/
 int dx, dy, kx, ky, mx, my;
-int xpos, ypos;
 
-int newfloor(int sizex, int sizey, int mat[sizex][sizey], int xpos, int ypos)
+int newfloor(int sizex, int sizey, int mat[sizex][sizey])
 {
 	/*print wall tiles*/
 	int wallx, wally;
@@ -82,10 +81,6 @@ int newfloor(int sizex, int sizey, int mat[sizex][sizey], int xpos, int ypos)
 	dx = rand() % sizex, dy = rand() % sizey; /*ladder*/
 	kx = rand() % sizex, ky = rand() % sizey; /*key*/
 	mx = rand() % sizex, my = rand() % sizey; /*money*/
-		
-	/*player*/
-	xpos = 1, ypos = 1;	
-	mat[ypos][xpos] = characterid;
 	
 	/*ladder*/
 	mat[dy][dx] = ladderid;
@@ -104,11 +99,6 @@ int main(int argc, char *argv[])
 {
 	srand(time(0)); /*generate seeds*/
 	
-	/*player variables*/
-	xpos = 1, ypos = 1;
-	int health = 5, money = 0;
-	int haskey = 0;
-	
 	/*map variables*/
 	int sizex, sizey;
 	if(argv[1] != NULL) /*if arguments are supplied to the console*/
@@ -123,8 +113,14 @@ int main(int argc, char *argv[])
 	}
 	
 	int mat[sizey+2][sizex+2];
-	newfloor(sizex+1, sizey+1, mat, xpos, ypos);
+	newfloor(sizex+1, sizey+1, mat);
 	
+	/*player*/
+	int xpos = 1, ypos = 1;	
+	int health = 5, money = 0;
+	int haskey = 0;
+	mat[ypos][xpos] = characterid; /*set player position*/
+
 	while(1)
 	{		
 		system(clearscr); /*clear screen*/
@@ -166,27 +162,33 @@ int main(int argc, char *argv[])
 		char press = getchar();
 		
 		/*movement and collision*/
-		if(press == 'a' && mat[ypos][xpos-1] != wallid) /*left*/
+		switch(press)
 		{
-			xpos-=1;
-		} else if(press == 'd' && mat[ypos][xpos+1] != wallid) /*right*/
-		{
-			xpos+=1;
-		} else if(press == 'w' && mat[ypos-1][xpos] != wallid) /*up*/
-		{
-			ypos-=1;
-		} else if(press == 's' && mat[ypos+1][xpos] != wallid) /*down*/
-		{
-			ypos+=1;
+			case 'a':
+				if(mat[ypos][xpos-1] != wallid) xpos-=1; /*left*/
+			break;
+			
+			case 'd':
+				if(mat[ypos][xpos+1] != wallid) xpos+=1; /*right*/
+			break;
+			
+			case 'w':
+				if(mat[ypos-1][xpos] != wallid) ypos-=1; /*up*/
+			break;
+			
+			case 's':
+				if(mat[ypos+1][xpos] != wallid) ypos+=1; /*down*/
+			break;
 		}
 		
 		/*go to next level*/
 		if(mat[ypos][xpos] == ladderid && haskey == 1)
 		{
+			newfloor(sizex+1, sizey+1, mat);
+			
 			xpos = 1, ypos = 1;
 			haskey-=1;
-			
-			newfloor(sizex+1, sizey+1, mat, xpos, ypos);
+			mat[ypos][xpos] = characterid; /*set player position*/
 		}
 		
 		/*screen wrap*/
