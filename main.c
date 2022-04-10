@@ -61,17 +61,11 @@ int newfloor(int sizex, int sizey, int mat[sizex][sizey])
 	{
 		for(floory=1; floory<sizey+1; floory++)
 		{
-			int dir = rand() % 4;
+			int dir = rand() % 2;
 			if(dir == 0)
 			{
-				mat[floory-1][floorx] = 45;
-			} else if(dir == 1)
-			{
-				mat[floory+1][floorx] = 45;
-			} else if(dir == 2)
-			{
 				mat[floory][floorx-1] = 45;
-			}	else if(dir == 3)
+			} else if(dir == 1)
 			{
 				mat[floory][floorx+1] = 45;
 			}
