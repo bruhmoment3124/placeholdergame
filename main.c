@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-/*monochrome and extended ascii characters*/
+/*for monochrome screens*/
 #define monochrome 0
-#define asciiext 1
 
 /*define colors*/
 #if monochrome == 0
@@ -23,15 +22,9 @@
 	#define reset
 #endif
 
-#if asciiext == 0
-	#define characterid 64
-	#define wallid 35
-	#define ladderid 61
-#elif asciiext == 1
-	#define characterid 148
-	#define wallid 219
-	#define ladderid 240
-#endif
+#define characterid 64
+#define wallid 47
+#define ladderid 61
 
 #if __WIN32
 	#define clearscr "cls"
@@ -64,10 +57,10 @@ int newfloor(int sizex, int sizey, int mat[sizex][sizey])
 			int dir = rand() % 2;
 			if(dir == 0)
 			{
-				mat[floory][floorx-1] = 45;
+				mat[floory][floorx-1] = 46;
 			} else if(dir == 1)
 			{
-				mat[floory][floorx+1] = 45;
+				mat[floory][floorx+1] = 46;
 			}
 		}
 	}
@@ -76,17 +69,19 @@ int newfloor(int sizex, int sizey, int mat[sizex][sizey])
 	kx = rand() % sizex, ky = rand() % sizey; /*key*/
 	mx = rand() % sizex, my = rand() % sizey; /*money*/
 	
-	/*ladder*/
-	mat[dy][dx] = ladderid;
-	mat[ky][kx] = 33;
-	
 	/*money*/
-	int l;
-	for(l=0; l<5; l++)
+	int m;
+	for(m=0; m<5; m++)
 	{
 		mx = rand() % sizex, my = rand() % sizey;
 		mat[mx][my] = 36;
 	}
+	
+	/*ladder*/
+	mat[dy][dx] = ladderid;
+	
+	/*key*/
+	mat[ky][kx] = 33;
 }
 
 int main(int argc, char *argv[])
@@ -107,7 +102,9 @@ int main(int argc, char *argv[])
 	}
 	
 	int mat[sizey+2][sizex+2];
-	newfloor(sizex+1, sizey+1, mat);
+	int level = 1;
+	
+	newfloor(sizex+1, sizey+1, mat); /*create 1st floor*/
 	
 	/*player*/
 	int xpos = 1, ypos = 1;	
@@ -128,7 +125,7 @@ int main(int argc, char *argv[])
 				if(mat[i][k] == wallid) /*bricks*/
 				{
 					printf(blue "%c" reset, mat[i][k]); /*blue*/
-				} else if(mat[i][k] == 45) /*ground*/
+				} else if(mat[i][k] == 46) /*ground*/
 				{
 					printf(grey "%c" reset, mat[i][k]); /*grey*/
 				} else if(mat[i][k] == 33) /*key*/
@@ -144,7 +141,7 @@ int main(int argc, char *argv[])
 			}
 			printf("\n");
 		}
-		printf(red "%%:%d " reset green "$:%d " reset, health, money); /*health and money*/
+		printf(red "%%:%d " reset green "$:%d " reset blue "lvl:%d " reset, health, money, level); /*health and money*/
 		if(haskey == 1) printf(yellow "!\n" reset); /*key*/
 		
 		/*tile swaping*/
@@ -178,8 +175,9 @@ int main(int argc, char *argv[])
 		/*go to next level*/
 		if(mat[ypos][xpos] == ladderid && haskey == 1)
 		{
+			level+=1; /*increment level int*/
 			newfloor(sizex+1, sizey+1, mat);
-			
+		
 			xpos = 1, ypos = 1;
 			haskey-=1;
 			mat[ypos][xpos] = characterid; /*set player position*/
@@ -203,14 +201,14 @@ int main(int argc, char *argv[])
 		/*collect money*/
 		if(mat[ypos][xpos] == 36) 
 		{
-			mat[my][mx] = 45;
+			mat[my][mx] = 46;
 			money+=1;
 		}
 		
 		/*collect key*/
 		if(mat[ypos][xpos] == 33) 
 		{
-			mat[ky][kx] = 45;
+			mat[ky][kx] = 46;
 			haskey = 1;
 		}
 	}
