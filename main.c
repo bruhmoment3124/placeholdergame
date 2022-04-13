@@ -32,10 +32,17 @@
 	#define clearscr "clear"
 #endif
 
-/*stuff variables; will almost CERTAINLY change later*/
-int dx, dy, kx, ky, mx, my;
+/*interactable items*/
+struct items
+{
+	/*x and y coordinates*/
+	int dx, dy; /*door*/
+	int kx, ky; /*key*/
+	int mx, my; /*money*/
+} items;
 
-int newfloor(int sizex, int sizey, int mat[sizex][sizey])
+
+int newfloor(int sizex, int sizey, int mat[sizey][sizex])
 {
 	/*print wall tiles*/
 	int wallx, wally;
@@ -65,23 +72,23 @@ int newfloor(int sizex, int sizey, int mat[sizex][sizey])
 		}
 	}
 	
-	dx = rand() % sizex, dy = rand() % sizey; /*ladder*/
-	kx = rand() % sizex, ky = rand() % sizey; /*key*/
-	mx = rand() % sizex, my = rand() % sizey; /*money*/
+	items.dx = rand() % sizex, items.dy = rand() % sizey; /*ladder*/
+	items.kx = rand() % sizex, items.ky = rand() % sizey; /*key*/
+	items.mx = rand() % sizex, items.my = rand() % sizey; /*money*/
 	
 	/*money*/
 	int m;
 	for(m=0; m<5; m++)
 	{
-		mx = rand() % sizex, my = rand() % sizey;
-		mat[mx][my] = 36;
+		items.mx = rand() % sizex, items.my = rand() % sizey;
+		mat[items.my][items.mx] = 36;
 	}
 	
 	/*ladder*/
-	mat[dy][dx] = ladderid;
+	mat[items.dy][items.dx] = ladderid;
 	
 	/*key*/
-	mat[ky][kx] = 33;
+	mat[items.ky][items.kx] = 33;
 }
 
 int main(int argc, char *argv[])
@@ -141,8 +148,14 @@ int main(int argc, char *argv[])
 			}
 			printf("\n");
 		}
-		printf(red "%%:%d " reset green "$:%d " reset blue "lvl:%d " reset, health, money, level); /*health and money*/
-		if(haskey == 1) printf(yellow "!\n" reset); /*key*/
+		
+		if(haskey == 1) /*health, money, level, and key*/
+		{
+			printf(red "%%:%d " reset green "$:%d " reset blue "lvl:%d " reset yellow "!\n" reset, health, money, level);
+		} else
+		{
+			printf(red "%%:%d " reset green "$:%d " reset blue "lvl:%d\n" reset, health, money, level);
+		}
 		
 		/*tile swaping*/
 		int temp = mat[ypos][xpos];
@@ -201,14 +214,14 @@ int main(int argc, char *argv[])
 		/*collect money*/
 		if(mat[ypos][xpos] == 36) 
 		{
-			mat[my][mx] = 46;
+			mat[items.my][items.mx] = 46;
 			money+=1;
 		}
 		
 		/*collect key*/
 		if(mat[ypos][xpos] == 33) 
 		{
-			mat[ky][kx] = 46;
+			mat[items.ky][items.kx] = 46;
 			haskey = 1;
 		}
 	}
