@@ -78,14 +78,14 @@ int newfloor(int sizex, int sizey, int mat[sizey+1][sizex+1])
 	items.mx = rand() % sizex, items.my = rand() % sizey; /*money*/
 	
 	/*ladder*/
-	while(mat[items.dy][items.dx] != 46 && items.dx == 0 || items.dy == 0)
+	while(items.dx == 0 || items.dy == 0)
 	{
 		items.dx = rand() % sizex, items.dy = rand() % sizey;
 	}
 	mat[items.dy][items.dx] = ladderid;
 	
 	/*key*/
-	while(mat[items.ky][items.kx] != 46 && items.kx == 0 || items.ky == 0)
+	while(items.kx == 0 || items.ky == 0)
 	{
 		items.kx = rand() % sizex, items.ky = rand() % sizey;	
 	}
@@ -157,7 +157,6 @@ int main(int argc, char *argv[])
 		{
 			printf(red "%%:%d " reset green "$:%d " reset blue "lvl:%d\n" reset, health, money, level);
 		}
-		printf("%d %d, %d %d\n", items.dx, items.dy, items.kx, items.ky);
 		
 		/*tile swaping*/
 		int temp = mat[ypos][xpos];
