@@ -42,7 +42,7 @@ struct items
 } items;
 
 
-int newfloor(int sizex, int sizey, int mat[sizey][sizex])
+int newfloor(int sizex, int sizey, int mat[sizey+1][sizex+1])
 {
 	/*print wall tiles*/
 	int wallx, wally;
@@ -72,23 +72,16 @@ int newfloor(int sizex, int sizey, int mat[sizey][sizex])
 		}
 	}
 	
+	/*set random points of each item*/
 	items.dx = rand() % sizex, items.dy = rand() % sizey; /*ladder*/
 	items.kx = rand() % sizex, items.ky = rand() % sizey; /*key*/
 	items.mx = rand() % sizex, items.my = rand() % sizey; /*money*/
-	
-	/*money*/
-	int m;
-	for(m=0; m<5; m++)
-	{
-		items.mx = rand() % sizex, items.my = rand() % sizey;
-		mat[items.my][items.mx] = 36;
-	}
 	
 	/*ladder*/
 	mat[items.dy][items.dx] = ladderid;
 	
 	/*key*/
-	mat[items.ky][items.kx] = 33;
+	if(mat[items.ky][items.kx] != ladderid) mat[items.ky][items.kx] = 33;
 }
 
 int main(int argc, char *argv[])
